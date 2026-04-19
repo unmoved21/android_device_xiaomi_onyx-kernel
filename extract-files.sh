@@ -140,6 +140,16 @@ find "${extract_out}/dtbs" -type f -name "*.dtb" \
     -exec printf "  - dtbs/" \; \
     -exec basename {} \;
 
+# Disable awinic_haptic node in all DTBs to prevent IRQ conflict with si_haptic
+echo "Disabling awinic_haptic in device tree to prevent IRQ conflicts"
+for dtb in ./images/dtbs/*.dtb; do
+    if fdtget -t s "$dtb" /__symbols__ awinic_haptic > /dev/null 2>&1; then
+        node=$(fdtget -t s "$dtb" /__symbols__ awinic_haptic)
+        fdtput -t s "$dtb" "$node" status disabled
+        echo "  - Disabled awinic_haptic in $(basename $dtb)"
+    fi
+done
+
 python3 "${extract_out}/extract_dtb.py" "${extract_out}/dtbo.img" -o "${extract_out}/dtbo" > /dev/null
 for DTBO_PANEL_PATCH in "${DTBO_PANEL_PATCHES[@]}"; do
     DTBO_PANEL_PATCH=(${DTBO_PANEL_PATCH//:/ })
