@@ -146,7 +146,7 @@ for dtb in ./images/dtbs/*.dtb; do
     if fdtget -t s "$dtb" /__symbols__ awinic_haptic > /dev/null 2>&1; then
         node=$(fdtget -t s "$dtb" /__symbols__ awinic_haptic)
         fdtput -t s "$dtb" "$node" status disabled
-        echo "  - Disabled awinic_haptic in $(basename $dtb)"
+        echo "  - Disabled awinic_haptic in $(basename "$dtb")"
     fi
 done
 
